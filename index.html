@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PM-Quill — 写代码之前，先想清楚做什么</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Sans+JP:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
   :root {
     --ink: #0f0f12;
@@ -31,7 +31,7 @@
   html { scroll-behavior: smooth; font-size: 16px; }
 
   body {
-    font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans SC', 'Noto Sans JP', -apple-system, sans-serif;
     background: var(--parchment);
     color: var(--ink);
     line-height: 1.7;
@@ -104,6 +104,12 @@
     letter-spacing: -0.02em;
   }
 
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .nav-links {
     display: flex;
     align-items: center;
@@ -135,6 +141,103 @@
     background: var(--ink-light) !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(15, 15, 18, 0.2);
+  }
+
+  /* ===== Language Switcher ===== */
+  .lang-switcher {
+    position: relative;
+    margin-left: 20px;
+  }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1.5px solid rgba(15, 15, 18, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .lang-btn:hover {
+    border-color: var(--quill-gold);
+    color: var(--quill-gold);
+    background: var(--quill-gold-glow);
+  }
+
+  .lang-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .lang-btn .arrow {
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  .lang-switcher.open .lang-btn .arrow {
+    transform: rotate(180deg);
+  }
+
+  .lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 140px;
+    background: #fff;
+    border: 1px solid rgba(200, 164, 78, 0.15);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+    z-index: 200;
+  }
+
+  .lang-switcher.open .lang-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .lang-option:hover {
+    background: var(--quill-gold-glow);
+  }
+
+  .lang-option.active {
+    color: var(--quill-gold);
+    font-weight: 600;
+  }
+
+  .lang-option .flag {
+    font-size: 16px;
+    line-height: 1;
   }
 
   /* ===== Hero ===== */
@@ -953,6 +1056,7 @@
   @media (max-width: 768px) {
     .hero { padding: 120px 0 80px; }
     .nav-links { display: none; }
+    .lang-switcher { margin-left: 0; }
     .workflow-steps { grid-template-columns: 1fr; }
     .value-grid { grid-template-columns: 1fr; }
     .comparison-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -984,28 +1088,52 @@
       <div class="nav-logo-icon"><img src="https://raw.githubusercontent.com/lukeliu95/PM-Quill/master/images/pm-quill-logo-500.png" alt="PM-Quill Logo"></div>
       <span class="nav-logo-text">PM-Quill</span>
     </a>
-    <ul class="nav-links">
-      <li><a href="#workflow">工作流</a></li>
-      <li><a href="#value">核心价值</a></li>
-      <li><a href="#audience">适合谁</a></li>
-      <li><a href="#start" class="nav-cta">开始使用</a></li>
-    </ul>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#workflow" data-i18n="nav.workflow">工作流</a></li>
+        <li><a href="#value" data-i18n="nav.value">核心价值</a></li>
+        <li><a href="#audience" data-i18n="nav.audience">适合谁</a></li>
+        <li><a href="#start" class="nav-cta" data-i18n="nav.cta">开始使用</a></li>
+      </ul>
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" id="langBtn" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span id="langLabel">中文</span>
+          <span class="arrow">&#9662;</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <button class="lang-option active" data-lang="zh">
+            <span class="flag">&#127464;&#127475;</span> 中文简体
+          </button>
+          <button class="lang-option" data-lang="en">
+            <span class="flag">&#127468;&#127463;</span> English
+          </button>
+          <button class="lang-option" data-lang="ja">
+            <span class="flag">&#127471;&#127477;</span> 日本語
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">Claude Code 原生技能</div>
-    <h1>
+    <div class="hero-badge" data-i18n="hero.badge">Claude Code 原生技能</div>
+    <h1 data-i18n-html="hero.title">
       写代码之前<span class="line-break"><span class="highlight">先想清楚做什么</span></span>
     </h1>
-    <p class="hero-sub">
+    <p class="hero-sub" data-i18n="hero.sub">
       AI 时代编码不再是瓶颈，决策才是。PM-Quill 帮你把模糊的想法变成清晰的产品蓝图，让每一行代码都写在点子上。
     </p>
     <div class="hero-actions">
-      <a href="#start" class="btn btn-primary">&#9998; 立即体验</a>
-      <a href="#workflow" class="btn btn-ghost">了解工作流 &rarr;</a>
+      <a href="#start" class="btn btn-primary" data-i18n-html="hero.btnPrimary">&#9998; 立即体验</a>
+      <a href="#workflow" class="btn btn-ghost" data-i18n-html="hero.btnGhost">了解工作流 &rarr;</a>
     </div>
 
     <div class="hero-terminal fade-up">
@@ -1016,13 +1144,13 @@
         <div class="terminal-title">PM-Quill &mdash; Claude Code</div>
       </div>
       <div class="terminal-body">
-        <div><span class="prompt">$</span> <span class="cmd">/spec</span> <span class="comment"># 输入你的想法</span></div>
-        <div style="margin-top:4px; padding-left:16px;"><span class="output">&#10003;</span> 已生成产品规格 &rarr; <span class="file">specs/my-app/spec.md</span></div>
-        <div style="margin-top:12px;"><span class="prompt">$</span> <span class="cmd">/feasibility</span> <span class="comment"># 评估可行性</span></div>
-        <div style="padding-left:16px;"><span class="output">&#10003;</span> 3 个技术方案对比完成 &rarr; <span class="file">specs/my-app/feasibility.md</span></div>
-        <div style="margin-top:12px;"><span class="prompt">$</span> <span class="cmd">/plan</span> <span class="comment"># 拆解执行计划</span></div>
-        <div style="padding-left:16px;"><span class="output">&#10003;</span> 12 个可执行任务已生成 &rarr; <span class="file">specs/my-app/plan.md</span></div>
-        <div style="margin-top:16px; color: rgba(255,255,255,0.3); font-size:12px;">&#x1f389; 可直接交给 Cursor / Claude Code 执行</div>
+        <div><span class="prompt">$</span> <span class="cmd">/spec</span> <span class="comment" data-i18n="terminal.comment1"># 输入你的想法</span></div>
+        <div style="margin-top:4px; padding-left:16px;"><span class="output">&#10003;</span> <span data-i18n="terminal.out1">已生成产品规格</span> &rarr; <span class="file">specs/my-app/spec.md</span></div>
+        <div style="margin-top:12px;"><span class="prompt">$</span> <span class="cmd">/feasibility</span> <span class="comment" data-i18n="terminal.comment2"># 评估可行性</span></div>
+        <div style="padding-left:16px;"><span class="output">&#10003;</span> <span data-i18n="terminal.out2">3 个技术方案对比完成</span> &rarr; <span class="file">specs/my-app/feasibility.md</span></div>
+        <div style="margin-top:12px;"><span class="prompt">$</span> <span class="cmd">/plan</span> <span class="comment" data-i18n="terminal.comment3"># 拆解执行计划</span></div>
+        <div style="padding-left:16px;"><span class="output">&#10003;</span> <span data-i18n="terminal.out3">12 个可执行任务已生成</span> &rarr; <span class="file">specs/my-app/plan.md</span></div>
+        <div style="margin-top:16px; color: rgba(255,255,255,0.3); font-size:12px;" data-i18n-html="terminal.footer">&#x1f389; 可直接交给 Cursor / Claude Code 执行</div>
       </div>
     </div>
   </div>
@@ -1032,55 +1160,55 @@
 <section class="problem">
   <div class="container">
     <div>
-      <div class="problem-label">&#9888; 问题</div>
-      <h2>AI 帮你写了代码<br>但谁帮你想清楚方向？</h2>
-      <p class="problem-desc">
+      <div class="problem-label" data-i18n-html="problem.label">&#9888; 问题</div>
+      <h2 data-i18n-html="problem.title">AI 帮你写了代码<br>但谁帮你想清楚方向？</h2>
+      <p class="problem-desc" data-i18n="problem.desc">
         Cursor、Claude Code 让编码速度提升了 10 倍。但如果方向错了，你只是更快地造了一个没人要的东西。
       </p>
       <ul class="pain-list">
         <li class="pain-item">
           <div class="pain-icon">&#128161;</div>
           <div>
-            <h4>"想到哪写到哪"</h4>
-            <p>有了个想法就开始写代码，做到一半发现需求都没想清楚</p>
+            <h4 data-i18n="pain1.title">"想到哪写到哪"</h4>
+            <p data-i18n="pain1.desc">有了个想法就开始写代码，做到一半发现需求都没想清楚</p>
           </div>
         </li>
         <li class="pain-item">
           <div class="pain-icon">&#128260;</div>
           <div>
-            <h4>反复推翻重来</h4>
-            <p>原型做了三版，每次都是"早知道当初应该..."</p>
+            <h4 data-i18n="pain2.title">反复推翻重来</h4>
+            <p data-i18n="pain2.desc">原型做了三版，每次都是"早知道当初应该..."</p>
           </div>
         </li>
         <li class="pain-item">
           <div class="pain-icon">&#128100;</div>
           <div>
-            <h4>一个人当产品经理</h4>
-            <p>独立开发者没有 PM 把关，全靠自己拍脑袋</p>
+            <h4 data-i18n="pain3.title">一个人当产品经理</h4>
+            <p data-i18n="pain3.desc">独立开发者没有 PM 把关，全靠自己拍脑袋</p>
           </div>
         </li>
       </ul>
     </div>
     <div class="problem-visual">
       <div class="chaos-card">
-        <span class="tag tag-abandoned">已废弃</span>
-        <h4 class="strikethrough">AI 内容聚合器 v3</h4>
-        <p>写了 2 周代码，发现市场上已经有 10 个竞品</p>
+        <span class="tag tag-abandoned" data-i18n="chaos.abandoned">已废弃</span>
+        <h4 class="strikethrough" data-i18n="chaos1.title">AI 内容聚合器 v3</h4>
+        <p data-i18n="chaos1.desc">写了 2 周代码，发现市场上已经有 10 个竞品</p>
       </div>
       <div class="chaos-card">
-        <span class="tag tag-pivot">方向调整</span>
-        <h4>TODO 应用 &rarr; 项目管理 &rarr; ??? </h4>
-        <p>功能越加越多，核心价值越来越模糊</p>
+        <span class="tag tag-pivot" data-i18n="chaos.pivot">方向调整</span>
+        <h4 data-i18n-html="chaos2.title">TODO 应用 &rarr; 项目管理 &rarr; ??? </h4>
+        <p data-i18n="chaos2.desc">功能越加越多，核心价值越来越模糊</p>
       </div>
       <div class="chaos-card">
-        <span class="tag tag-stuck">卡住了</span>
-        <h4>不知道 MVP 该砍哪些功能</h4>
-        <p>"这个也很重要""那个也不能少"</p>
+        <span class="tag tag-stuck" data-i18n="chaos.stuck">卡住了</span>
+        <h4 data-i18n="chaos3.title">不知道 MVP 该砍哪些功能</h4>
+        <p data-i18n="chaos3.desc">"这个也很重要""那个也不能少"</p>
       </div>
       <div class="chaos-card">
-        <span class="tag tag-abandoned">已废弃</span>
-        <h4 class="strikethrough">社交电商小程序</h4>
-        <p>技术栈选了 3 次，最终放弃</p>
+        <span class="tag tag-abandoned" data-i18n="chaos.abandoned">已废弃</span>
+        <h4 class="strikethrough" data-i18n="chaos4.title">社交电商小程序</h4>
+        <p data-i18n="chaos4.desc">技术栈选了 3 次，最终放弃</p>
       </div>
     </div>
   </div>
@@ -1090,9 +1218,9 @@
 <section class="workflow" id="workflow">
   <div class="container">
     <div class="section-header">
-      <div class="section-label">&#9998; 工作流</div>
-      <h2>四步，从想法到可执行计划</h2>
-      <p>每一步都有专业 Agent 驱动，输出结构化的 Markdown 文件，可追溯、可版本控制</p>
+      <div class="section-label" data-i18n-html="workflow.label">&#9998; 工作流</div>
+      <h2 data-i18n="workflow.title">四步，从想法到可执行计划</h2>
+      <p data-i18n="workflow.desc">每一步都有专业 Agent 驱动，输出结构化的 Markdown 文件，可追溯、可版本控制</p>
     </div>
 
     <div class="workflow-steps">
@@ -1100,9 +1228,9 @@
         <span class="step-arrow">&rarr;</span>
         <div class="step-number">01</div>
         <div class="step-cmd gold">/spec</div>
-        <h3>产品规格</h3>
-        <p>输入一个模糊的想法，输出结构化的 Spec：目标用户、核心功能（不超过 3 个）、不做什么、成功标准</p>
-        <div class="step-output">
+        <h3 data-i18n="step1.title">产品规格</h3>
+        <p data-i18n="step1.desc">输入一个模糊的想法，输出结构化的 Spec：目标用户、核心功能（不超过 3 个）、不做什么、成功标准</p>
+        <div class="step-output" data-i18n-html="step1.output">
           <span class="file">spec.md</span> generated<br>
           <span class="success">&#10003;</span> 用户画像已定义<br>
           <span class="success">&#10003;</span> 3 个核心功能<br>
@@ -1114,9 +1242,9 @@
         <span class="step-arrow">&rarr;</span>
         <div class="step-number">02</div>
         <div class="step-cmd gold">/feasibility</div>
-        <h3>可行性分析</h3>
-        <p>评估技术可行性，给出 2-3 个技术方案对比，估算工作量，标出关键风险</p>
-        <div class="step-output">
+        <h3 data-i18n="step2.title">可行性分析</h3>
+        <p data-i18n="step2.desc">评估技术可行性，给出 2-3 个技术方案对比，估算工作量，标出关键风险</p>
+        <div class="step-output" data-i18n-html="step2.output">
           <span class="file">feasibility.md</span> generated<br>
           <span class="success">&#10003;</span> 方案 A vs B vs C<br>
           <span class="warn">&#9888;</span> 风险: 第三方 API 限制<br>
@@ -1128,9 +1256,9 @@
         <span class="step-arrow">&rarr;</span>
         <div class="step-number">03</div>
         <div class="step-cmd gold">/plan</div>
-        <h3>执行计划</h3>
-        <p>把确认后的 Spec 拆解为可执行的任务列表，每个任务带验收标准，可直接交给编码 AI</p>
-        <div class="step-output">
+        <h3 data-i18n="step3.title">执行计划</h3>
+        <p data-i18n="step3.desc">把确认后的 Spec 拆解为可执行的任务列表，每个任务带验收标准，可直接交给编码 AI</p>
+        <div class="step-output" data-i18n-html="step3.output">
           <span class="file">plan.md</span> generated<br>
           <span class="success">&#10003;</span> 12 个任务已排序<br>
           <span class="success">&#10003;</span> MVP 范围已划定<br>
@@ -1141,9 +1269,9 @@
       <div class="step-card fade-up" style="transition-delay:0.3s;">
         <div class="step-number">04</div>
         <div class="step-cmd gold">/review</div>
-        <h3>项目回顾</h3>
-        <p>项目完成后复盘，提炼哪些决策对了、哪些错了，经验沉淀为下一个项目的参考</p>
-        <div class="step-output">
+        <h3 data-i18n="step4.title">项目回顾</h3>
+        <p data-i18n="step4.desc">项目完成后复盘，提炼哪些决策对了、哪些错了，经验沉淀为下一个项目的参考</p>
+        <div class="step-output" data-i18n-html="step4.output">
           <span class="file">review.md</span> generated<br>
           <span class="success">&#10003;</span> 3 个经验总结<br>
           <span class="warn">&#9888;</span> 2 个待改进项<br>
@@ -1158,41 +1286,41 @@
 <section class="value" id="value">
   <div class="container">
     <div class="section-header">
-      <div class="section-label">&#10024; 核心价值</div>
-      <h2>为什么用 PM-Quill</h2>
-      <p>不是又一个 AI 编码工具，而是编码之前的思考伙伴</p>
+      <div class="section-label" data-i18n-html="value.label">&#10024; 核心价值</div>
+      <h2 data-i18n="value.title">为什么用 PM-Quill</h2>
+      <p data-i18n="value.desc">不是又一个 AI 编码工具，而是编码之前的思考伙伴</p>
     </div>
 
     <div class="value-grid">
       <div class="value-card fade-up">
         <div class="value-icon">&#127919;</div>
-        <h3>Spec 驱动，少走弯路</h3>
-        <p>在写第一行代码之前就把"做什么"和"不做什么"想清楚。一份好的 Spec 胜过十次重构。</p>
+        <h3 data-i18n="val1.title">Spec 驱动，少走弯路</h3>
+        <p data-i18n="val1.desc">在写第一行代码之前就把"做什么"和"不做什么"想清楚。一份好的 Spec 胜过十次重构。</p>
       </div>
       <div class="value-card fade-up" style="transition-delay:0.05s;">
         <div class="value-icon">&#9889;</div>
-        <h3>渐进式，不问废话</h3>
-        <p>不会一上来问 100 个问题。先出 80% 的方案，不确定的地方标注出来让你拍板。</p>
+        <h3 data-i18n="val2.title">渐进式，不问废话</h3>
+        <p data-i18n="val2.desc">不会一上来问 100 个问题。先出 80% 的方案，不确定的地方标注出来让你拍板。</p>
       </div>
       <div class="value-card fade-up" style="transition-delay:0.1s;">
         <div class="value-icon">&#128196;</div>
-        <h3>文件即数据库</h3>
-        <p>所有产出都是 Markdown 文件。可读、可搜、可 Git 版本控制。不锁定任何平台。</p>
+        <h3 data-i18n="val3.title">文件即数据库</h3>
+        <p data-i18n="val3.desc">所有产出都是 Markdown 文件。可读、可搜、可 Git 版本控制。不锁定任何平台。</p>
       </div>
       <div class="value-card fade-up" style="transition-delay:0.15s;">
         <div class="value-icon">&#128279;</div>
-        <h3>无缝对接编码 AI</h3>
-        <p>输出的任务可以直接复制到 Cursor 或 Claude Code。PM-Quill 想方向，它们写代码。</p>
+        <h3 data-i18n="val4.title">无缝对接编码 AI</h3>
+        <p data-i18n="val4.desc">输出的任务可以直接复制到 Cursor 或 Claude Code。PM-Quill 想方向，它们写代码。</p>
       </div>
       <div class="value-card fade-up" style="transition-delay:0.2s;">
         <div class="value-icon">&#128202;</div>
-        <h3>决策有据可查</h3>
-        <p>每个产品决策都有文件记录：为什么选这个方案、放弃了什么、风险在哪。半年后回看不迷路。</p>
+        <h3 data-i18n="val5.title">决策有据可查</h3>
+        <p data-i18n="val5.desc">每个产品决策都有文件记录：为什么选这个方案、放弃了什么、风险在哪。半年后回看不迷路。</p>
       </div>
       <div class="value-card fade-up" style="transition-delay:0.25s;">
         <div class="value-icon">&#128736;</div>
-        <h3>零配置，开箱即用</h3>
-        <p>作为 Claude Code 原生技能运行，不需要额外安装。打开终端，输入命令，直接开始。</p>
+        <h3 data-i18n="val6.title">零配置，开箱即用</h3>
+        <p data-i18n="val6.desc">作为 Claude Code 原生技能运行，不需要额外安装。打开终端，输入命令，直接开始。</p>
       </div>
     </div>
   </div>
@@ -1202,34 +1330,34 @@
 <section class="comparison">
   <div class="container">
     <div class="section-header">
-      <div class="section-label">&#128260; 对比</div>
-      <h2>有没有 PM-Quill 的区别</h2>
+      <div class="section-label" data-i18n-html="compare.label">&#128260; 对比</div>
+      <h2 data-i18n="compare.title">有没有 PM-Quill 的区别</h2>
     </div>
 
     <div class="comparison-grid">
       <div class="comparison-col col-before">
-        <h3>&#10060; 没有 PM-Quill</h3>
+        <h3 data-i18n-html="compare.before">&#10060; 没有 PM-Quill</h3>
         <ul class="comparison-list">
-          <li><span class="icon">&#10060;</span> 想到一个 idea 就开始写代码</li>
-          <li><span class="icon">&#10060;</span> 需求在脑子里，边写边改</li>
-          <li><span class="icon">&#10060;</span> 技术栈凭感觉选，选完就后悔</li>
-          <li><span class="icon">&#10060;</span> MVP 什么都想放进去，做不完</li>
-          <li><span class="icon">&#10060;</span> 做完不知道下一步优先做什么</li>
-          <li><span class="icon">&#10060;</span> 三个月后看代码不记得当初为什么这么设计</li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before1">想到一个 idea 就开始写代码</span></li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before2">需求在脑子里，边写边改</span></li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before3">技术栈凭感觉选，选完就后悔</span></li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before4">MVP 什么都想放进去，做不完</span></li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before5">做完不知道下一步优先做什么</span></li>
+          <li><span class="icon">&#10060;</span> <span data-i18n="before6">三个月后看代码不记得当初为什么这么设计</span></li>
         </ul>
       </div>
 
       <div class="comparison-divider">&rarr;</div>
 
       <div class="comparison-col col-after">
-        <h3>&#10004; 用了 PM-Quill</h3>
+        <h3 data-i18n-html="compare.after">&#10004; 用了 PM-Quill</h3>
         <ul class="comparison-list">
-          <li><span class="icon">&#10004;</span> 先用 /spec 把想法结构化</li>
-          <li><span class="icon">&#10004;</span> 需求文档化，版本可追溯</li>
-          <li><span class="icon">&#10004;</span> 2-3 个方案对比分析，有理有据</li>
-          <li><span class="icon">&#10004;</span> MVP 范围明确，只做最核心的 3 件事</li>
-          <li><span class="icon">&#10004;</span> 优先级排好的任务列表，直接执行</li>
-          <li><span class="icon">&#10004;</span> 所有决策有记录，/review 沉淀经验</li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after1">先用 /spec 把想法结构化</span></li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after2">需求文档化，版本可追溯</span></li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after3">2-3 个方案对比分析，有理有据</span></li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after4">MVP 范围明确，只做最核心的 3 件事</span></li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after5">优先级排好的任务列表，直接执行</span></li>
+          <li><span class="icon">&#10004;</span> <span data-i18n="after6">所有决策有记录，/review 沉淀经验</span></li>
         </ul>
       </div>
     </div>
@@ -1240,38 +1368,38 @@
 <section class="positioning">
   <div class="container">
     <div class="section-header">
-      <div class="section-label">&#128640; 定位</div>
-      <h2 style="color:#fff;">编码 AI 的上游</h2>
-      <p>Cursor / Claude Code 帮你写代码，PM-Quill 帮你决定写什么代码</p>
+      <div class="section-label" data-i18n-html="pos.label">&#128640; 定位</div>
+      <h2 style="color:#fff;" data-i18n="pos.title">编码 AI 的上游</h2>
+      <p data-i18n="pos.desc">Cursor / Claude Code 帮你写代码，PM-Quill 帮你决定写什么代码</p>
     </div>
 
     <div class="position-diagram">
       <div class="position-row">
-        <div class="position-phase">&#128161; 想法阶段</div>
+        <div class="position-phase" data-i18n-html="phase.idea">&#128161; 想法阶段</div>
         <div class="position-card active">
           <h4>PM-Quill</h4>
           <p>/spec &rarr; /feasibility &rarr; /plan</p>
         </div>
       </div>
       <div class="position-row">
-        <div class="position-phase">&#128187; 编码阶段</div>
+        <div class="position-phase" data-i18n-html="phase.code">&#128187; 编码阶段</div>
         <div class="position-card">
           <h4>Cursor / Claude Code</h4>
-          <p>基于 PM-Quill 输出的任务列表执行编码</p>
+          <p data-i18n="phase.codeDesc">基于 PM-Quill 输出的任务列表执行编码</p>
         </div>
       </div>
       <div class="position-row">
-        <div class="position-phase">&#128230; 管理阶段</div>
+        <div class="position-phase" data-i18n-html="phase.manage">&#128230; 管理阶段</div>
         <div class="position-card">
           <h4>Linear / Notion</h4>
-          <p>项目管理、进度追踪、团队协作</p>
+          <p data-i18n="phase.manageDesc">项目管理、进度追踪、团队协作</p>
         </div>
       </div>
       <div class="position-row">
-        <div class="position-phase">&#127912; 设计阶段</div>
+        <div class="position-phase" data-i18n-html="phase.design">&#127912; 设计阶段</div>
         <div class="position-card">
           <h4>Figma / v0</h4>
-          <p>UI 设计、原型制作、视觉稿</p>
+          <p data-i18n="phase.designDesc">UI 设计、原型制作、视觉稿</p>
         </div>
       </div>
     </div>
@@ -1282,31 +1410,31 @@
 <section class="audience" id="audience">
   <div class="container">
     <div class="section-header">
-      <div class="section-label">&#128101; 适合谁</div>
-      <h2>你可能就是 PM-Quill 的用户</h2>
+      <div class="section-label" data-i18n-html="aud.label">&#128101; 适合谁</div>
+      <h2 data-i18n="aud.title">你可能就是 PM-Quill 的用户</h2>
     </div>
 
     <div class="audience-grid">
       <div class="persona-card fade-up">
-        <span class="persona-badge">核心用户</span>
-        <h3>独立创业的技术人</h3>
-        <p class="subtitle">会写代码，但从没当过产品经理</p>
+        <span class="persona-badge" data-i18n="persona1.badge">核心用户</span>
+        <h3 data-i18n="persona1.title">独立创业的技术人</h3>
+        <p class="subtitle" data-i18n="persona1.sub">会写代码，但从没当过产品经理</p>
         <ul class="persona-scenarios">
-          <li><span class="q">&#10148;</span> "我想做一个 AI 驱动的 XX" &mdash; 不知道从哪开始</li>
-          <li><span class="q">&#10148;</span> 看到有趣的开源项目，想基于它做产品，但不确定方向</li>
-          <li><span class="q">&#10148;</span> MVP 做完了，不知道下一步优先做什么</li>
-          <li><span class="q">&#10148;</span> 一个人全栈干，需要一个 AI 产品经理帮把关</li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona1.s1">"我想做一个 AI 驱动的 XX" — 不知道从哪开始</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona1.s2">看到有趣的开源项目，想基于它做产品，但不确定方向</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona1.s3">MVP 做完了，不知道下一步优先做什么</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona1.s4">一个人全栈干，需要一个 AI 产品经理帮把关</span></li>
         </ul>
       </div>
       <div class="persona-card fade-up" style="transition-delay:0.1s;">
-        <span class="persona-badge">潜力用户</span>
-        <h3>Vibe Coder</h3>
-        <p class="subtitle">非技术背景，靠 AI 编码工具做产品</p>
+        <span class="persona-badge" data-i18n="persona2.badge">潜力用户</span>
+        <h3 data-i18n="persona2.title">Vibe Coder</h3>
+        <p class="subtitle" data-i18n="persona2.sub">非技术背景，靠 AI 编码工具做产品</p>
         <ul class="persona-scenarios">
-          <li><span class="q">&#10148;</span> 完全不会写代码，但有产品直觉</li>
-          <li><span class="q">&#10148;</span> AI 能帮写代码，但没人帮想清楚要写什么</li>
-          <li><span class="q">&#10148;</span> 需要结构化思考框架，而不只是聊天式的 AI</li>
-          <li><span class="q">&#10148;</span> 希望每个决策都有记录，方便团队对齐</li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona2.s1">完全不会写代码，但有产品直觉</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona2.s2">AI 能帮写代码，但没人帮想清楚要写什么</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona2.s3">需要结构化思考框架，而不只是聊天式的 AI</span></li>
+          <li><span class="q">&#10148;</span> <span data-i18n="persona2.s4">希望每个决策都有记录，方便团队对齐</span></li>
         </ul>
       </div>
     </div>
@@ -1316,48 +1444,115 @@
 <!-- CTA -->
 <section class="cta" id="start">
   <div class="container">
-    <h2>开始用 PM-Quill<br><span class="gold">想清楚再动手</span></h2>
-    <p>打开终端，输入一个命令，让 AI 帮你做产品经理该做的事。</p>
+    <h2 data-i18n-html="cta.title">开始用 PM-Quill<br><span class="gold">想清楚再动手</span></h2>
+    <p data-i18n="cta.desc">打开终端，输入一个命令，让 AI 帮你做产品经理该做的事。</p>
     <div class="cta-code">
-      <span class="prompt">$</span> <span class="cmd">/spec</span> 我想做一个...
+      <span class="prompt">$</span> <span class="cmd">/spec</span> <span data-i18n="cta.placeholder">我想做一个...</span>
     </div>
     <br><br>
-    <a href="https://github.com/lukeliu95/PM-Quill" class="btn btn-primary" style="font-size:16px; padding:16px 36px;">
+    <a href="https://github.com/lukeliu95/PM-Quill" class="btn btn-primary" style="font-size:16px; padding:16px 36px;" data-i18n-html="cta.github">
       &#11088; GitHub 获取 PM-Quill
     </a>
-    <p class="cta-note" style="margin-top:20px;">Claude Code 原生技能 &middot; 零配置 &middot; 即装即用</p>
+    <p class="cta-note" style="margin-top:20px;" data-i18n-html="cta.note">Claude Code 原生技能 &middot; 零配置 &middot; 即装即用</p>
   </div>
 </section>
 
 <!-- Footer -->
 <footer>
   <div class="container">
-    <p>&#9998; PM-Quill &mdash; 写代码之前，先想清楚做什么</p>
+    <p data-i18n-html="footer.left">&#9998; PM-Quill &mdash; 写代码之前，先想清楚做什么</p>
     <p>Built with <span class="gold">&#9829;</span> for indie makers</p>
   </div>
 </footer>
 
+<script src="i18n.js"></script>
 <script>
-  // Scroll fade-in animation
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+// ===== Language Switching Logic =====
+let currentLang = localStorage.getItem('pm-quill-lang') || 'zh';
 
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+function setLanguage(lang) {
+  const pack = i18n[lang];
+  if (!pack) return;
 
-  // Nav shadow on scroll
-  window.addEventListener('scroll', () => {
-    const nav = document.querySelector('nav');
-    if (window.scrollY > 20) {
-      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.06)';
-    } else {
-      nav.style.boxShadow = 'none';
+  currentLang = lang;
+  localStorage.setItem('pm-quill-lang', lang);
+
+  // Update html lang & title
+  document.documentElement.lang = pack._lang;
+  document.title = pack._title;
+
+  // Update switcher button label
+  document.getElementById('langLabel').textContent = pack._label;
+
+  // Update active state in dropdown
+  document.querySelectorAll('.lang-option').forEach(function(opt) {
+    opt.classList.toggle('active', opt.dataset.lang === lang);
+  });
+
+  // Update all i18n elements — use innerHTML for all to support unicode/emoji
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (pack[key] !== undefined) {
+      el.innerHTML = pack[key];
     }
   });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (pack[key] !== undefined) {
+      el.innerHTML = pack[key];
+    }
+  });
+
+  // Close dropdown
+  document.getElementById('langSwitcher').classList.remove('open');
+}
+
+// Toggle dropdown
+document.getElementById('langBtn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('langSwitcher').classList.toggle('open');
+});
+
+// Language option clicks — stopPropagation to prevent document click from closing immediately
+document.getElementById('langDropdown').addEventListener('click', function(e) {
+  e.stopPropagation();
+  var option = e.target.closest('.lang-option');
+  if (option) {
+    setLanguage(option.dataset.lang);
+  }
+});
+
+// Close dropdown on outside click
+document.addEventListener('click', function() {
+  document.getElementById('langSwitcher').classList.remove('open');
+});
+
+// Init: apply saved language on load
+if (currentLang !== 'zh') {
+  setLanguage(currentLang);
+}
+
+// ===== Scroll fade-in animation =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Nav shadow on scroll
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 20) {
+    nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.06)';
+  } else {
+    nav.style.boxShadow = 'none';
+  }
+});
 </script>
 
 </body>
