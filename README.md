@@ -57,7 +57,7 @@ claude
 /spec 我想做一个帮独立开发者追踪 AI API 成本的仪表盘
 ```
 
-PM-Quill 会问你几个关键问题，然后生成一份完整的产品规格。接着运行 `/feasibility` 评估方案，`/plan` 拆成任务，就可以把任务交给 Cursor 或 Claude Code 去写代码了。
+PM-Quill 会问你几个关键问题，然后生成一份完整的产品规格。接着运行 `/feasibility` 评估方案，`/plan` 拆成任务，就可以把任务交给 OpenCode 或 Claude Code 去写代码了。
 
 ## 工作流示例
 
