@@ -1,4 +1,4 @@
-# Quill — 产品定义
+# PM-Quill — 产品定义
 
 ## 一句话
 
@@ -6,7 +6,7 @@ AI 驱动的产品决策工具。帮你在写代码之前想清楚做什么。
 
 ## 定位
 
-编码 AI 工具的上游。Cursor/Claude Code 帮你写代码，Quill 帮你决定写什么代码。
+编码 AI 工具的上游。Cursor/Claude Code 帮你写代码，PM-Quill 帮你决定写什么代码。
 
 ## 目标用户
 
@@ -62,6 +62,6 @@ AI 驱动的产品决策工具。帮你在写代码之前想清楚做什么。
 
 ## 灵感来源
 
-- **Bill_v1** — CLAUDE.md + Agent 架构 + 文件记忆 = Quill 的原型
+- **Bill_v1** — CLAUDE.md + Agent 架构 + 文件记忆 = PM-Quill 的原型
 - **obsidian-claude-pkm** — Skills/Agents/Hooks 的标准化格式
 - **aios-core** — "Agentic Agile" PRD→执行自动化
