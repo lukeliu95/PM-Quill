@@ -109,7 +109,7 @@ PM-Quill/
 
 - 不写代码（交给 Cursor / Claude Code）
 - 不做项目管理（交给 Linear / Notion）
-- 不做设计（交给 Figma）
+- 不做设计（交给 Figma / Gemini）
 - 不做市场调研（交给专门的调研工具）
 
 ## 作者
