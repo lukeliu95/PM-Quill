@@ -112,6 +112,10 @@ PM-Quill/
 - 不做设计（交给 Figma）
 - 不做市场调研（交给专门的调研工具）
 
+## 作者
+
+- [刘仙升](https://x.com/lukeliu95)
+
 ## License
 
 MIT
