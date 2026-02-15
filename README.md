@@ -1,3 +1,5 @@
+![PM-Quill Logo](images/pm-quill-logo.png)
+
 # PM-Quill — AI 驱动的产品决策工具
 
 > 在写代码之前，先想清楚做什么。
