@@ -122,7 +122,7 @@ const i18n = {
   en: {
     _title: "PM-Quill \u2014 Think before you code",
     _lang: "en",
-    _label: "EN",
+    _label: "English",
     "nav.workflow": "Workflow",
     "nav.value": "Value",
     "nav.audience": "For Who",
