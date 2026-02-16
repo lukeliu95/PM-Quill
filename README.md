@@ -1,122 +1,124 @@
 ![PM-Quill Logo](images/pm-quill-logo.png)
 
-# PM-Quill — AI 驱动的产品决策工具
+# PM-Quill — AI-Powered Product Decision Tool
 
-> 在写代码之前，先想清楚做什么。
+[中文](README.zh.md) | [日本語](README.ja.md)
 
-编码 AI 工具的**上游**。Cursor / Claude Code 帮你写代码，PM-Quill 帮你决定**写什么代码**。
+> Think before you code.
 
-## 为什么需要 PM-Quill
+The **upstream** of coding AI tools. Cursor / Claude Code writes your code. PM-Quill helps you decide **what code to write**.
 
-AI 把编码的门槛拉到了地板。但"做什么"和"为什么做"这个决策，还是靠拍脑袋。
+## Why PM-Quill
 
-独立开发者的常见循环：
+AI has lowered the barrier to coding to the floor. But the decision of "what to build" and "why to build it" still relies on gut feeling.
 
-```
-有个想法 → 直接写代码 → 做到一半方向不对 → 推倒重来
-```
-
-PM-Quill 帮你打破这个循环：
+The common cycle for indie developers:
 
 ```
-有个想法 → /spec 想清楚 → /feasibility 评估 → /plan 拆任务 → 交给 AI 写代码
+Have an idea → Start coding → Realize halfway the direction is wrong → Start over
 ```
 
-## 核心命令
+PM-Quill breaks this cycle:
 
-| 命令 | 做什么 | 输出 |
-|------|--------|------|
-| `/spec` | 把模糊想法变成结构化产品规格 | `specs/{project}/spec.md` |
-| `/feasibility` | 评估技术方案、工作量、风险 | `specs/{project}/feasibility.md` |
-| `/plan` | 拆解成可执行的任务列表 | `specs/{project}/plan.md` |
-| `/review` | 项目回顾，提炼经验教训 | `specs/{project}/review.md` |
+```
+Have an idea → /spec think it through → /feasibility evaluate → /plan break into tasks → Hand off to AI to code
+```
 
-## 快速开始
+## Core Commands
 
-### 前提
+| Command | What it does | Output |
+|---------|-------------|--------|
+| `/spec` | Turn a vague idea into a structured product spec | `specs/{project}/spec.md` |
+| `/feasibility` | Evaluate technical approaches, effort, and risks | `specs/{project}/feasibility.md` |
+| `/plan` | Break down into an executable task list | `specs/{project}/plan.md` |
+| `/review` | Project retrospective, extract lessons learned | `specs/{project}/review.md` |
 
-- 安装 [Claude Code](https://code.claude.com/)
-- 安装 [OpenCode](https://opencode.ai/)
+## Quick Start
 
-### 使用
+### Prerequisites
 
-1. 克隆仓库：
+- Install [Claude Code](https://code.claude.com/)
+- Install [OpenCode](https://opencode.ai/)
+
+### Usage
+
+1. Clone the repo:
 
 ```bash
-git clone <repo-url> PM-Quill
+git clone https://github.com/lukeliu95/PM-Quill.git
 ```
 
-2. 在 PM-Quill 目录下启动 Claude Code / OpenCode：
+2. Launch Claude Code / OpenCode in the PM-Quill directory:
 
 ```bash
 cd PM-Quill
 claude
 ```
 
-3. 开始用：
+3. Start using:
 
 ```
-/spec 我想做一个帮独立开发者追踪 AI API 成本的仪表盘
+/spec I want to build a dashboard that helps indie devs track AI API costs
 ```
 
-PM-Quill 会问你几个关键问题，然后生成一份完整的产品规格。接着运行 `/feasibility` 评估方案，`/plan` 拆成任务，就可以把任务交给 OpenCode 或 Claude Code 去写代码了。
+PM-Quill will ask a few key questions, then generate a complete product spec. Next, run `/feasibility` to evaluate approaches, `/plan` to break into tasks, and hand the tasks off to OpenCode or Claude Code to write the code.
 
-## 工作流示例
+## Workflow Example
 
 ```
-你：/spec 我想做一个 Chrome 插件，帮人快速保存和整理书签
+You: /spec I want to build a Chrome extension to quickly save and organize bookmarks
 
-PM-Quill：[问 1-2 个关键问题]
-PM-Quill：[生成 specs/bookmark-manager/spec.md]
+PM-Quill: [Asks 1-2 key questions]
+PM-Quill: [Generates specs/bookmark-manager/spec.md]
 
-你：/feasibility
+You: /feasibility
 
-PM-Quill：[评估 2-3 个技术方案，估算工作量]
-PM-Quill：[生成 specs/bookmark-manager/feasibility.md]
+PM-Quill: [Evaluates 2-3 technical approaches, estimates effort]
+PM-Quill: [Generates specs/bookmark-manager/feasibility.md]
 
-你：/plan
+You: /plan
 
-PM-Quill：[拆解成按天排列的任务，每个任务附带可以直接给 AI 用的提示词]
-PM-Quill：[生成 specs/bookmark-manager/plan.md]
+PM-Quill: [Breaks into daily tasks, each with prompts ready for AI]
+PM-Quill: [Generates specs/bookmark-manager/plan.md]
 
-你：把 Task 1.1 的提示词复制到 Cursor，开始写代码
+You: Copy Task 1.1's prompt into Cursor, start coding
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 PM-Quill/
-├── CLAUDE.md              # 产品灵魂文件
-├── context/               # 产品和用户上下文
-│   ├── product.md         # PM-Quill 的产品定义
-│   └── user.md            # 目标用户画像
-├── specs/                 # 所有项目的 Spec 输出
-│   └── {project-name}/    # 每个项目一个子目录
-├── templates/             # Spec 模板
-├── archive/               # 已完成项目的归档
+├── CLAUDE.md              # Product soul file
+├── context/               # Product and user context
+│   ├── product.md         # PM-Quill's product definition
+│   └── user.md            # Target user personas
+├── specs/                 # All project spec outputs
+│   └── {project-name}/    # One subdirectory per project
+├── templates/             # Spec templates
+├── archive/               # Archived completed projects
 └── .claude/
-    ├── agents/            # 专业 Agent 定义
-    ├── skills/            # 斜杠命令定义
-    └── rules/             # 撰写规范
+    ├── agents/            # Specialized agent definitions
+    ├── skills/            # Slash command definitions
+    └── rules/             # Writing standards
 ```
 
-## 设计原则
+## Design Principles
 
-1. **Spec 驱动一切** — 不写 Spec 就不动手
-2. **文件即数据库** — 所有产出都是 Markdown，可读、可搜、可版本控制
-3. **渐进式披露** — 先出 80% 的方案，不确定的地方标注让你决策
-4. **简单优先** — 三行重复代码好过一个过早的抽象
+1. **Spec drives everything** — No spec, no action
+2. **Files as database** — All outputs are Markdown: readable, searchable, version-controlled
+3. **Progressive disclosure** — Deliver an 80% solution first, flag uncertainties for your decision
+4. **Simplicity first** — Three lines of repeated code beats a premature abstraction
 
-## 不做什么
+## What We Don't Do
 
-- 不写代码（交给 Cursor / Claude Code）
-- 不做项目管理（交给 Linear / Notion）
-- 不做设计（交给 Figma / Gemini）
-- 不做市场调研（交给专门的调研工具）
+- Don't write code (leave that to Cursor / Claude Code)
+- Don't do project management (leave that to Linear / Notion)
+- Don't do design (leave that to Figma / Gemini)
+- Don't do market research (leave that to dedicated research tools)
 
-## 作者
+## Author
 
-- [刘仙升](https://x.com/lukeliu95)
+- [Luke Liu](https://x.com/lukeliu95)
 
 ## License
 
